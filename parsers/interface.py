@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from . import registry
-import csv
+import csv, os, json
 
 # === Декоратор-Регистратор парсеров ===
 def register_parser(format_name: str):
@@ -13,25 +13,29 @@ def register_parser(format_name: str):
 class DocumentParser(ABC):
     @abstractmethod
     def parse(self, file_path: str) -> dict:
-        with open(file_path, newline="", encoding="utf-8") as f:
-            reader = csv.reader(f)
-            for row in reader:
-                print(row)
+       pass
 
 # === Конкретные парсеры ===
 @register_parser("csv")
 class CSVParser(DocumentParser):
     def parse(self, file_path: str) -> dict:
-        with open(file_path, newline="", encoding="utf-8") as f:
-            reader = csv.reader(f)
-            for row in reader:
-                print(row)
+        try:
+            with open(file_path, newline="", encoding="utf-8") as f:
+                reader = csv.reader(f)
+                for row in reader:
+                    print(row)
+                    rows = len(row)
+                print(f"CSV-файл {file_path} обработан", "кол-во строк", rows)
+        except FileNotFoundError:
+            print("Ошибка: файл не найден!")
+        #return {'row': f"CSV-файл {file_path} обработан", "строк": 100}
     
 @register_parser("json")
 class JSONParser(DocumentParser):
     def parse(self, file_path: str) -> dict:
-        # Имитация парсинга JSON
-        return {"data": f"JSON-файл {file_path} обработан", "keys": 5}    
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data
     
 # === Фабрика с доп. функционалом ===
 class ParserFactory:

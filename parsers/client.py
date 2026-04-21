@@ -2,7 +2,7 @@ from .interface import  ParserFactory
 
 # Получаем и используем парсер
 prs = ParserFactory.create_parser('csv')
-res = prs.parse('./files/data.csv')
+res = prs.parse('./files/data1.csv')
 print(res)
 
 # Получаем список доступных парсеров
