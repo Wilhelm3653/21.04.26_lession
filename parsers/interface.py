@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from . import registry
-import csv, os, json
+import csv, os, json, pandas
 
 # === Декоратор-Регистратор парсеров ===
 def register_parser(format_name: str):
@@ -28,7 +28,6 @@ class CSVParser(DocumentParser):
                 print(f"CSV-файл {file_path} обработан", "кол-во строк", rows)
         except FileNotFoundError:
             print("Ошибка: файл не найден!")
-        #return {'row': f"CSV-файл {file_path} обработан", "строк": 100}
     
 @register_parser("json")
 class JSONParser(DocumentParser):
@@ -36,6 +35,16 @@ class JSONParser(DocumentParser):
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
         return data
+    
+@register_parser("xlsx")
+class EXCELParser(DocumentParser):
+    def parse(self, file_path: str) -> dict:
+        try:
+            read = pandas.read_excel(file_path)
+            print(read)
+            print(f"XLSX-файл {file_path} обработан", "кол-во строк", len(read))
+        except FileNotFoundError:
+            print("Ошибка: файл не найден!")
     
 # === Фабрика с доп. функционалом ===
 class ParserFactory:
